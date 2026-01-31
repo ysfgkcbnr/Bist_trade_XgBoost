@@ -1,0 +1,142 @@
+// ============================================================
+// WEBHOOK ALERT KODU - Pine Script v5
+// Bu kodu mevcut UT Bot indikatörüne EKLE
+// ============================================================
+
+// === EMA'LAR (200, 377, 610) ===
+ema200 = ta.ema(close, 200)
+ema377 = ta.ema(close, 377)
+ema610 = ta.ema(close, 610)
+
+// EMA Uzaklıkları
+dist_ema_200 = (close - ema200) / ema200
+dist_ema_377 = (close - ema377) / ema377
+dist_ema_610 = (close - ema610) / ema610
+
+// EMA Gap'ler
+ema_200_377_gap = math.abs(ema200 - ema377) / close
+ema_377_610_gap = math.abs(ema377 - ema610) / close
+ema_all_gap = math.abs(ema200 - ema610) / close
+
+// EMA Yakınsama (%2'den az fark)
+emas_converging = ema_all_gap < 0.02 ? 1 : 0
+
+// EMA Destek/Direnç (fiyat EMA'ya %2'den yakın)
+near_threshold = 0.02
+ema_200_support = dist_ema_200 > 0 and dist_ema_200 < near_threshold ? 1 : 0
+ema_200_resistance = dist_ema_200 < 0 and math.abs(dist_ema_200) < near_threshold ? 1 : 0
+ema_377_support = dist_ema_377 > 0 and dist_ema_377 < near_threshold ? 1 : 0
+ema_377_resistance = dist_ema_377 < 0 and math.abs(dist_ema_377) < near_threshold ? 1 : 0
+ema_610_support = dist_ema_610 > 0 and dist_ema_610 < near_threshold ? 1 : 0
+ema_610_resistance = dist_ema_610 < 0 and math.abs(dist_ema_610) < near_threshold ? 1 : 0
+
+// Destek Gücü Skoru
+support_strength = ema_200_support * 1 + ema_377_support * 2 + ema_610_support * 3 + emas_converging * 2
+resistance_strength = ema_200_resistance * 1 + ema_377_resistance * 2 + ema_610_resistance * 3 + emas_converging * 2
+near_ema_support = support_strength > 0 ? 1 : 0
+near_ema_resistance = resistance_strength > 0 ? 1 : 0
+super_support_zone = emas_converging == 1 and support_strength >= 3 ? 1 : 0
+
+// EMA Durumları
+above_ema_200 = close > ema200 ? 1 : 0
+above_ema_377 = close > ema377 ? 1 : 0
+above_ema_610 = close > ema610 ? 1 : 0
+above_all_emas = close > ema200 and close > ema377 and close > ema610 ? 1 : 0
+ema_stack = ema200 > ema377 and ema377 > ema610 ? 1 : 0
+
+// === STOCHASTIC RSI ===
+smoothK = 3
+smoothD = 3
+lengthRSI = 14
+lengthStoch = 14
+rsi1 = ta.rsi(close, lengthRSI)
+stoch_k = ta.sma(ta.stoch(rsi1, rsi1, rsi1, lengthStoch), smoothK)
+stoch_d = ta.sma(stoch_k, smoothD)
+
+// === POI - DESTEK/DİRENÇ ===
+swing_length = 10
+swing_high = ta.highest(high, swing_length * 2 + 1)
+swing_low = ta.lowest(low, swing_length * 2 + 1)
+dist_to_resistance = (swing_high - close) / close
+dist_to_support = (close - swing_low) / close
+near_support = dist_to_support < 0.02 ? 1 : 0
+near_resistance = dist_to_resistance < 0.02 ? 1 : 0
+
+// === TRAILING STOP UZAKLIĞI ===
+// NOT: xATRTrailingStop senin UT Bot kodunda zaten tanımlı olmalı
+// Eğer farklı bir isimle tanımlıysan aşağıdaki satırı değiştir
+dist_to_stop = (close - xATRTrailingStop) / close
+
+// === WEBHOOK JSON MESAJI ===
+webhook_message = '{' +
+    '"ticker":"' + syminfo.ticker + '",' +
+    '"price":' + str.tostring(close) + ',' +
+    '"signal":"BUY",' +
+
+    // EMA Uzaklıkları
+    '"dist_ema_200":' + str.tostring(dist_ema_200) + ',' +
+    '"dist_ema_377":' + str.tostring(dist_ema_377) + ',' +
+    '"dist_ema_610":' + str.tostring(dist_ema_610) + ',' +
+
+    // EMA Gap'ler
+    '"ema_200_377_gap":' + str.tostring(ema_200_377_gap) + ',' +
+    '"ema_377_610_gap":' + str.tostring(ema_377_610_gap) + ',' +
+    '"ema_all_gap":' + str.tostring(ema_all_gap) + ',' +
+    '"emas_converging":' + str.tostring(emas_converging) + ',' +
+
+    // EMA Destek/Direnç
+    '"ema_200_support":' + str.tostring(ema_200_support) + ',' +
+    '"ema_200_resistance":' + str.tostring(ema_200_resistance) + ',' +
+    '"ema_377_support":' + str.tostring(ema_377_support) + ',' +
+    '"ema_377_resistance":' + str.tostring(ema_377_resistance) + ',' +
+    '"ema_610_support":' + str.tostring(ema_610_support) + ',' +
+    '"ema_610_resistance":' + str.tostring(ema_610_resistance) + ',' +
+
+    // Destek Gücü
+    '"support_strength":' + str.tostring(support_strength) + ',' +
+    '"resistance_strength":' + str.tostring(resistance_strength) + ',' +
+    '"near_ema_support":' + str.tostring(near_ema_support) + ',' +
+    '"near_ema_resistance":' + str.tostring(near_ema_resistance) + ',' +
+    '"super_support_zone":' + str.tostring(super_support_zone) + ',' +
+
+    // EMA Durumları
+    '"above_ema_200":' + str.tostring(above_ema_200) + ',' +
+    '"above_ema_377":' + str.tostring(above_ema_377) + ',' +
+    '"above_ema_610":' + str.tostring(above_ema_610) + ',' +
+    '"above_all_emas":' + str.tostring(above_all_emas) + ',' +
+    '"ema_stack":' + str.tostring(ema_stack) + ',' +
+
+    // POI
+    '"dist_to_resistance":' + str.tostring(dist_to_resistance) + ',' +
+    '"dist_to_support":' + str.tostring(dist_to_support) + ',' +
+    '"near_support":' + str.tostring(near_support) + ',' +
+    '"near_resistance":' + str.tostring(near_resistance) + ',' +
+
+    // StochRSI
+    '"stoch_k":' + str.tostring(stoch_k) + ',' +
+    '"stoch_d":' + str.tostring(stoch_d) + ',' +
+
+    // Trailing Stop
+    '"dist_to_stop":' + str.tostring(dist_to_stop) + ',' +
+
+    // Güvenlik
+    '"secret":"your_secret_key_here"' +
+'}'
+
+// === ALERT - UT Bot AL sinyali geldiğinde gönder ===
+// NOT: "buy" değişkeni senin UT Bot kodundaki AL sinyali olmalı
+// Eğer farklı bir isimle tanımlıysan değiştir
+if buy
+    alert(webhook_message, alert.freq_once_per_bar_close)
+
+
+// ============================================================
+// TRADINGVİEW ALERT AYARLARI
+// ============================================================
+// 1. İndikatörü grafiğe ekle
+// 2. Sağ tıkla → "Add Alert"
+// 3. Condition: UT Bot Alert (veya senin indikatör adın)
+// 4. Options: "Once Per Bar Close"
+// 5. Webhook URL: https://xxxx.ngrok.io/webhook
+// 6. Message kutusuna sadece şunu yaz: {{message}}
+// ============================================================
