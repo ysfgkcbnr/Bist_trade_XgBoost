@@ -58,10 +58,11 @@ class WebhookConfig:
     TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
     TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '')
 
-    # Model Yolları (HİSSE BAZLI)
-    MODELS_DIR = "models"                       # Her hisse için ayrı model
-    FEATURES_PATH = "models/feature_columns.json"
-    SUMMARY_PATH = "models/model_summary.json"
+    # Model Yolları (HİSSE BAZLI) - Mutlak yol kullan
+    BASE_DIR = Path(__file__).parent
+    MODELS_DIR = str(BASE_DIR / "models")
+    FEATURES_PATH = str(BASE_DIR / "models" / "feature_columns.json")
+    SUMMARY_PATH = str(BASE_DIR / "models" / "model_summary.json")
 
     # Sinyal Eşik Değeri
     CONFIDENCE_THRESHOLD = 0.65  # %65 güven altındaki sinyalleri gönderme
