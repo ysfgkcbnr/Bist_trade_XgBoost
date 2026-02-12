@@ -454,54 +454,38 @@ def webhook():
         
         logger.info(f"🤖 {symbol_clean} Model sonucu: {'AL' if prediction == 1 else 'BEKLEME'} (Güven: %{confidence*100:.1f})")
         
-        # Eşik kontrolü
-        if confidence >= config.CONFIDENCE_THRESHOLD and prediction == 1:
-            # 🟢 GÜÇLÜ SİNYAL - Telegram'a gönder
-            
-            # Güven seviyesine göre emoji
-            if confidence >= 0.85:
-                strength = "🔥🔥🔥 ÇOOK GÜÇLÜ"
-            elif confidence >= 0.75:
-                strength = "🔥🔥 GÜÇLÜ"
-            else:
-                strength = "🔥 ORTA"
-            
-            message = f"""
-🚀 <b>AL SİNYALİ - AI ONAYLADI</b>
+        # Güven seviyesine göre mesaj oluştur
+        if confidence >= 0.85:
+            header = "🔥🔥🔥 AL SİNYALİ - ÇOOK GÜÇLÜ"
+        elif confidence >= 0.75:
+            header = "🔥🔥 AL SİNYALİ - GÜÇLÜ"
+        elif confidence >= config.CONFIDENCE_THRESHOLD:
+            header = "🔥 AL SİNYALİ - ORTA"
+        elif confidence >= 0.50:
+            header = "⚠️ AL SİNYALİ - DÜŞÜK GÜVEN"
+        else:
+            header = "❌ AL SİNYALİ - ÇOK DÜŞÜK"
+
+        message = f"""
+<b>{header}</b>
 
 📈 <b>{ticker}</b>
 💰 Fiyat: {price}
 🎯 AI Güven: <b>%{confidence*100:.1f}</b>
-💪 Güç: {strength}
+🤖 Model: {'AL' if prediction == 1 else 'BEKLEME'}
 
-📊 Detaylar:
-• RSI: {data.get('rsi', 'N/A')}
-• Hacim: {data.get('volume_ratio', 'N/A')}x
-• ADX: {data.get('adx', 'N/A')}
+📊 StochRSI K: {data.get('stoch_k', 'N/A')}
 
 ⏰ {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}
-
-⚠️ <i>Stop Loss: Girişin %5 altı</i>
 """
-            send_telegram_message(message)
-            
-            return jsonify({
-                'status': 'signal_sent',
-                'ticker': ticker,
-                'confidence': confidence,
-                'recommendation': 'BUY'
-            }), 200
-        
-        else:
-            # 🔴 ZAYIF SİNYAL - Gönderme
-            logger.info(f"❌ {ticker} sinyali elendi (Güven: %{confidence*100:.1f})")
-            
-            return jsonify({
-                'status': 'signal_rejected',
-                'ticker': ticker,
-                'confidence': confidence,
-                'reason': 'Below threshold' if confidence < config.CONFIDENCE_THRESHOLD else 'Model says wait'
-            }), 200
+        send_telegram_message(message)
+
+        return jsonify({
+            'status': 'signal_sent',
+            'ticker': ticker,
+            'confidence': confidence,
+            'recommendation': 'BUY' if confidence >= config.CONFIDENCE_THRESHOLD and prediction == 1 else 'WAIT'
+        }), 200
             
     except Exception as e:
         logger.error(f"Webhook hatası: {e}")
