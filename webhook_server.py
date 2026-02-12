@@ -378,11 +378,17 @@ def webhook():
     config = WebhookConfig()
     
     try:
-        # JSON verisini al
-        data = request.json
-        
+        # JSON verisini al (force=True: Content-Type header'ı olmasa da parse et)
+        data = request.get_json(force=True, silent=True)
+
         if not data:
-            return jsonify({'error': 'No data received'}), 400
+            # Fallback: raw body'den parse etmeyi dene
+            try:
+                import json as _json
+                data = _json.loads(request.data.decode('utf-8'))
+            except:
+                logger.error(f"JSON parse hatası. Body: {request.data[:500]}")
+                return jsonify({'error': 'Invalid JSON data'}), 400
         
         logger.info(f"📥 Webhook alındı: {data.get('ticker', 'Unknown')}")
         
