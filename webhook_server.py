@@ -65,6 +65,10 @@ class WebhookConfig:
     MODELS_DIR = str(BASE_DIR / "models")
     FEATURES_PATH = str(BASE_DIR / "models" / "feature_columns.json")
     SUMMARY_PATH = str(BASE_DIR / "models" / "model_summary.json")
+    # 1H Model Yolları
+    MODELS_DIR_1H = str(BASE_DIR / "models_1h")
+    FEATURES_PATH_1H = str(BASE_DIR / "models_1h" / "feature_columns.json")
+    SUMMARY_PATH_1H = str(BASE_DIR / "models_1h" / "model_summary.json")
 
     # Sinyal Eşik Değeri
     CONFIDENCE_THRESHOLD = 0.65  # %65 güven altındaki sinyalleri gönderme
@@ -101,71 +105,85 @@ class DominantWinnerModel:
 
 
 # Model cache ve feature'ları global olarak yükle
-MODEL_CACHE = {}  # {"THYAO": model, "GARAN": model, ...}
-FEATURE_COLS = None
+MODEL_CACHE = {}       # {"THYAO": model, "1h:ANGEN": model, ...}
+FEATURE_COLS = None    # 1D feature listesi
+FEATURE_COLS_1H = None # 1H feature listesi
 MODEL_SUMMARY = None
-AVAILABLE_STOCKS = []  # Eğitilmiş hisse listesi
+AVAILABLE_STOCKS = []      # 1D eğitilmiş hisse listesi
+AVAILABLE_STOCKS_1H = []   # 1H eğitilmiş hisse listesi
 
 
 def load_features_and_summary():
-    """Feature listesi ve model özetini yükler."""
-    global FEATURE_COLS, MODEL_SUMMARY, AVAILABLE_STOCKS
-    
+    """Feature listesi ve model özetini yükler (1D + 1H)."""
+    global FEATURE_COLS, FEATURE_COLS_1H, MODEL_SUMMARY, AVAILABLE_STOCKS, AVAILABLE_STOCKS_1H
+
     config = WebhookConfig()
-    
+
     try:
-        # Feature columns
+        # --- 1D ---
         if os.path.exists(config.FEATURES_PATH):
             with open(config.FEATURES_PATH, 'r') as f:
                 FEATURE_COLS = json.load(f)
-            logger.info(f"✅ {len(FEATURE_COLS)} feature yüklendi")
+            logger.info(f"✅ 1D: {len(FEATURE_COLS)} feature yüklendi")
         else:
-            logger.error(f"❌ Feature listesi bulunamadı: {config.FEATURES_PATH}")
+            logger.error(f"❌ 1D Feature listesi bulunamadı: {config.FEATURES_PATH}")
             return False
-        
-        # Model summary
+
         if os.path.exists(config.SUMMARY_PATH):
             with open(config.SUMMARY_PATH, 'r', encoding='utf-8') as f:
                 MODEL_SUMMARY = json.load(f)
             AVAILABLE_STOCKS = [m['symbol_clean'] for m in MODEL_SUMMARY.get('models', [])]
-            # Liste çok uzun olabildiği için ilk 10 ve son 5'i göster
-            stock_sample = f"{AVAILABLE_STOCKS[:10]} ... {AVAILABLE_STOCKS[-5:]}" if len(AVAILABLE_STOCKS) > 15 else AVAILABLE_STOCKS
-            logger.info(f"✅ {len(AVAILABLE_STOCKS)} hisse için Elit Model mevcut: {stock_sample}")
+            logger.info(f"✅ 1D: {len(AVAILABLE_STOCKS)} hisse modeli mevcut")
         else:
-            logger.warning(f"⚠️ Model özeti bulunamadı: {config.SUMMARY_PATH}")
-        
+            logger.warning(f"⚠️ 1D Model özeti bulunamadı: {config.SUMMARY_PATH}")
+
+        # --- 1H ---
+        if os.path.exists(config.FEATURES_PATH_1H):
+            with open(config.FEATURES_PATH_1H, 'r') as f:
+                FEATURE_COLS_1H = json.load(f)
+            logger.info(f"✅ 1H: {len(FEATURE_COLS_1H)} feature yüklendi")
+        else:
+            logger.warning(f"⚠️ 1H Feature listesi bulunamadı: {config.FEATURES_PATH_1H}")
+            FEATURE_COLS_1H = FEATURE_COLS  # Fallback: 1D ile aynı
+
+        if os.path.exists(config.SUMMARY_PATH_1H):
+            with open(config.SUMMARY_PATH_1H, 'r', encoding='utf-8') as f:
+                summary_1h = json.load(f)
+            AVAILABLE_STOCKS_1H = [m['symbol_clean'] for m in summary_1h.get('models', [])]
+            logger.info(f"✅ 1H: {len(AVAILABLE_STOCKS_1H)} hisse modeli mevcut")
+        else:
+            logger.warning(f"⚠️ 1H Model özeti bulunamadı: {config.SUMMARY_PATH_1H}")
+
         return True
-        
+
     except Exception as e:
         logger.error(f"❌ Yükleme hatası: {e}")
         return False
 
 
-def load_stock_model(symbol_clean):
+def load_stock_model(symbol_clean, interval='1d'):
     """
     Belirli bir hisse için modeli yükler (önbellek kullanır).
-    
-    Args:
-        symbol_clean: Hisse sembolü (orn: "THYAO", ".IS" olmadan)
-    
-    Returns:
-        Model veya None
+    interval: '1d' veya '1h'
     """
     global MODEL_CACHE
-    
+
+    cache_key = f"{interval}:{symbol_clean}"
+
     # Önbellekte varsa döndür
-    if symbol_clean in MODEL_CACHE:
-        return MODEL_CACHE[symbol_clean]
-    
+    if cache_key in MODEL_CACHE:
+        return MODEL_CACHE[cache_key]
+
     # Diskten yükle
     config = WebhookConfig()
-    model_path = os.path.join(config.MODELS_DIR, f"{symbol_clean}.pkl")
-    
+    models_dir = config.MODELS_DIR_1H if interval == '1h' else config.MODELS_DIR
+    model_path = os.path.join(models_dir, f"{symbol_clean}.pkl")
+
     if os.path.exists(model_path):
         try:
             model = joblib.load(model_path)
-            MODEL_CACHE[symbol_clean] = model  # Önbelleğe ekle
-            logger.info(f"✅ Model yüklendi: {symbol_clean}")
+            MODEL_CACHE[cache_key] = model
+            logger.info(f"✅ Model yüklendi: {symbol_clean} ({interval})")
             return model
         except Exception as e:
             logger.error(f"❌ Model yükleme hatası ({symbol_clean}): {e}")
@@ -270,13 +288,14 @@ def get_index_features(symbol_clean, price):
 def prepare_features_from_payload(data):
     """
     TradingView'den gelen veriyi model formatına çevirir.
-    
-    TÜM 37 FEATURE (Market Regime eklendi):
+    interval='1h' ise FEATURE_COLS_1H kullanır.
     """
     try:
         ticker = data.get('ticker', '')
         symbol_clean = ticker.replace('.IS', '').upper()
         price = float(data.get('price', 0))
+        interval = data.get('interval', '1d').lower()
+        feature_list = FEATURE_COLS_1H if interval == '1h' and FEATURE_COLS_1H else FEATURE_COLS
         
         # Endeks özelliklerini al
         idx_features = get_index_features(symbol_clean, price)
@@ -341,7 +360,7 @@ def prepare_features_from_payload(data):
         
         # Model feature'larıyla eşleştir
         features = {}
-        for col in FEATURE_COLS:
+        for col in feature_list:
             if col in feature_mapping:
                 features[col] = float(feature_mapping[col])
             else:
@@ -409,21 +428,26 @@ def webhook():
         ticker = data['ticker']
         price = data.get('price', 0)
         signal_type = data.get('signal', 'BUY')
-        
+        interval = data.get('interval', '1d').lower()  # '1d' veya '1h'
+
         # Ticker'dan sembolü çıkar (THYAO.IS -> THYAO)
         symbol_clean = ticker.replace('.IS', '').upper()
-        
+
+        # Interval'e göre doğru listeyi seç
+        available = AVAILABLE_STOCKS_1H if interval == '1h' else AVAILABLE_STOCKS
+
         # Bu hisse için model var mı?
-        if symbol_clean not in AVAILABLE_STOCKS:
-            logger.warning(f"⚠️ {symbol_clean} için model yok, sinyal gönderilmiyor")
+        if symbol_clean not in available:
+            logger.warning(f"⚠️ {symbol_clean} ({interval}) için model yok, sinyal gönderilmiyor")
             return jsonify({
                 'status': 'no_model',
                 'ticker': ticker,
-                'reason': f'{symbol_clean} için eğitilmiş model bulunamadı'
+                'interval': interval,
+                'reason': f'{symbol_clean} ({interval}) için eğitilmiş model bulunamadı'
             }), 200
-        
+
         # Hisseye özel modeli yükle
-        model = load_stock_model(symbol_clean)
+        model = load_stock_model(symbol_clean, interval)
         
         if model is None:
             logger.error(f"Model yüklenemedi: {symbol_clean}")
