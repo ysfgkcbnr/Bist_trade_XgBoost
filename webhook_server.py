@@ -23,6 +23,8 @@ import requests
 from datetime import datetime, timedelta
 import logging
 import yfinance as yf
+import pandas_ta as ta
+import data_utils
 
 # .env dosyasını yükle (lokal geliştirme için)
 # Railway'de bu dosya olmayacak, environment variables kullanılacak
@@ -229,6 +231,9 @@ def get_index_features(symbol_clean, price):
                 if isinstance(idx.columns, pd.MultiIndex):
                     idx.columns = idx.columns.get_level_values(0)
                 
+                # --- BOLUNME DUZELTMESI ---
+                idx = data_utils.adjust_for_splits(idx)
+
                 # Endeks Trendi
                 ema200 = idx['Close'].ewm(span=200, adjust=False).mean().iloc[-1]
                 idx_close = idx['Close'].iloc[-1]
@@ -378,17 +383,16 @@ def webhook():
     config = WebhookConfig()
     
     try:
-        # JSON verisini al (force=True: Content-Type header'ı olmasa da parse et)
-        data = request.get_json(force=True, silent=True)
+        # JSON verisini al - Content-Type header'ından bağımsız olarak raw body parse et
+        try:
+            raw_body = request.get_data(as_text=True)
+            data = json.loads(raw_body)
+        except Exception:
+            data = None
 
         if not data:
-            # Fallback: raw body'den parse etmeyi dene
-            try:
-                import json as _json
-                data = _json.loads(request.data.decode('utf-8'))
-            except:
-                logger.error(f"JSON parse hatası. Body: {request.data[:500]}")
-                return jsonify({'error': 'Invalid JSON data'}), 400
+            logger.error(f"JSON parse hatası. Body: {request.get_data()[:500]}")
+            return jsonify({'error': 'Invalid JSON data'}), 400
         
         logger.info(f"📥 Webhook alındı: {data.get('ticker', 'Unknown')}")
         

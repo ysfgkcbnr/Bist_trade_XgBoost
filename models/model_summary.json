@@ -1,8 +1,8 @@
 {
-  "training_date": "2026-02-01 20:00:00",
-  "total_stocks": 42,
-  "trained_count": 42,
-  "skipped_count": 0,
+  "training_date": "2026-02-14 00:00:25",
+  "total_stocks": 544,
+  "trained_count": 36,
+  "skipped_count": 508,
   "config": {
     "KEY_VALUE": 2,
     "ATR_PERIOD": 10,
@@ -13,256 +13,516 @@
   },
   "models": [
     {
-      "symbol": "ADESE.IS",
-      "symbol_clean": "ADESE",
-      "status": "trained",
-      "model_path": "models/ADESE.pkl"
-    },
-    {
-      "symbol": "AEFES.IS",
-      "symbol_clean": "AEFES",
-      "status": "trained",
-      "model_path": "models/AEFES.pkl"
-    },
-    {
       "symbol": "AKSA.IS",
       "symbol_clean": "AKSA",
       "status": "trained",
-      "model_path": "models/AKSA.pkl"
-    },
-    {
-      "symbol": "AKYHO.IS",
-      "symbol_clean": "AKYHO",
-      "status": "trained",
-      "model_path": "models/AKYHO.pkl"
-    },
-    {
-      "symbol": "ANHYT.IS",
-      "symbol_clean": "ANHYT",
-      "status": "trained",
-      "model_path": "models/ANHYT.pkl"
+      "model_path": "models/AKSA.pkl",
+      "signal_count": 45,
+      "train_size": 27,
+      "test_size": 10,
+      "accuracy": 0.9,
+      "precision": 1.0,
+      "recall": 0.6667,
+      "auc": 0.6905,
+      "target_dist": "35.6% başarılı"
     },
     {
       "symbol": "AVGYO.IS",
       "symbol_clean": "AVGYO",
       "status": "trained",
-      "model_path": "models/AVGYO.pkl"
+      "model_path": "models/AVGYO.pkl",
+      "signal_count": 57,
+      "train_size": 34,
+      "test_size": 13,
+      "accuracy": 0.5385,
+      "precision": 0.6667,
+      "recall": 0.6667,
+      "auc": 0.4444,
+      "target_dist": "63.2% başarılı",
+      "cv_precision": 0.6852
     },
     {
       "symbol": "AVOD.IS",
       "symbol_clean": "AVOD",
       "status": "trained",
-      "model_path": "models/AVOD.pkl"
+      "model_path": "models/AVOD.pkl",
+      "signal_count": 50,
+      "train_size": 30,
+      "test_size": 11,
+      "accuracy": 0.5455,
+      "precision": 1.0,
+      "recall": 0.375,
+      "auc": 0.75,
+      "target_dist": "68.0% başarılı",
+      "cv_precision": 0.7778
     },
     {
-      "symbol": "BEYAZ.IS",
-      "symbol_clean": "BEYAZ",
+      "symbol": "BAKAB.IS",
+      "symbol_clean": "BAKAB",
       "status": "trained",
-      "model_path": "models/BEYAZ.pkl"
+      "model_path": "models/BAKAB.pkl",
+      "signal_count": 50,
+      "train_size": 46,
+      "test_size": 11,
+      "accuracy": 0.6364,
+      "precision": 0.6667,
+      "recall": 0.4,
+      "auc": 0.7,
+      "target_dist": "30.0% başarılı",
+      "cv_precision": 0.6667
     },
     {
       "symbol": "BLUME.IS",
       "symbol_clean": "BLUME",
       "status": "trained",
-      "model_path": "models/BLUME.pkl"
+      "model_path": "models/BLUME.pkl",
+      "signal_count": 47,
+      "train_size": 44,
+      "test_size": 10,
+      "accuracy": 0.8,
+      "precision": 1.0,
+      "recall": 0.8,
+      "auc": 0.5,
+      "target_dist": "83.0% başarılı"
     },
     {
       "symbol": "CCOLA.IS",
       "symbol_clean": "CCOLA",
       "status": "trained",
-      "model_path": "models/CCOLA.pkl"
+      "model_path": "models/CCOLA.pkl",
+      "signal_count": 48,
+      "train_size": 28,
+      "test_size": 10,
+      "accuracy": 0.5,
+      "precision": 0.6667,
+      "recall": 0.3333,
+      "auc": 0.5625,
+      "target_dist": "54.2% başarılı"
     },
     {
       "symbol": "CELHA.IS",
       "symbol_clean": "CELHA",
       "status": "trained",
-      "model_path": "models/CELHA.pkl"
+      "model_path": "models/CELHA.pkl",
+      "signal_count": 45,
+      "train_size": 27,
+      "test_size": 10,
+      "accuracy": 0.4,
+      "precision": 0.6667,
+      "recall": 0.2857,
+      "auc": 0.381,
+      "target_dist": "62.2% başarılı"
+    },
+    {
+      "symbol": "CRDFA.IS",
+      "symbol_clean": "CRDFA",
+      "status": "trained",
+      "model_path": "models/CRDFA.pkl",
+      "signal_count": 48,
+      "train_size": 28,
+      "test_size": 10,
+      "accuracy": 0.4,
+      "precision": 0.6667,
+      "recall": 0.2857,
+      "auc": 0.5476,
+      "target_dist": "52.1% başarılı"
     },
     {
       "symbol": "DERHL.IS",
       "symbol_clean": "DERHL",
       "status": "trained",
-      "model_path": "models/DERHL.pkl"
-    },
-    {
-      "symbol": "DIRIT.IS",
-      "symbol_clean": "DIRIT",
-      "status": "trained",
-      "model_path": "models/DIRIT.pkl"
+      "model_path": "models/DERHL.pkl",
+      "signal_count": 33,
+      "train_size": 19,
+      "test_size": 8,
+      "accuracy": 0.625,
+      "precision": 0.7143,
+      "recall": 0.8333,
+      "auc": 0.6667,
+      "target_dist": "57.6% başarılı"
     },
     {
       "symbol": "DYOBY.IS",
       "symbol_clean": "DYOBY",
       "status": "trained",
-      "model_path": "models/DYOBY.pkl"
+      "model_path": "models/DYOBY.pkl",
+      "signal_count": 50,
+      "train_size": 30,
+      "test_size": 11,
+      "accuracy": 0.5455,
+      "precision": 0.8333,
+      "recall": 0.5556,
+      "auc": 0.3889,
+      "target_dist": "52.0% başarılı",
+      "cv_precision": 0.8214
     },
     {
       "symbol": "ECZYT.IS",
       "symbol_clean": "ECZYT",
       "status": "trained",
-      "model_path": "models/ECZYT.pkl"
+      "model_path": "models/ECZYT.pkl",
+      "signal_count": 49,
+      "train_size": 29,
+      "test_size": 11,
+      "accuracy": 0.6364,
+      "precision": 0.6667,
+      "recall": 0.4,
+      "auc": 0.6167,
+      "target_dist": "38.8% başarılı"
     },
     {
       "symbol": "ERSU.IS",
       "symbol_clean": "ERSU",
       "status": "trained",
-      "model_path": "models/ERSU.pkl"
+      "model_path": "models/ERSU.pkl",
+      "signal_count": 41,
+      "train_size": 24,
+      "test_size": 9,
+      "accuracy": 0.5556,
+      "precision": 1.0,
+      "recall": 0.4286,
+      "auc": 1.0,
+      "target_dist": "53.7% başarılı"
+    },
+    {
+      "symbol": "FADE.IS",
+      "symbol_clean": "FADE",
+      "status": "trained",
+      "model_path": "models/FADE.pkl",
+      "signal_count": 33,
+      "train_size": 19,
+      "test_size": 8,
+      "accuracy": 0.625,
+      "precision": 0.6667,
+      "recall": 0.5,
+      "auc": 0.6875,
+      "target_dist": "48.5% başarılı"
     },
     {
       "symbol": "FLAP.IS",
       "symbol_clean": "FLAP",
       "status": "trained",
-      "model_path": "models/FLAP.pkl"
+      "model_path": "models/FLAP.pkl",
+      "signal_count": 45,
+      "train_size": 27,
+      "test_size": 10,
+      "accuracy": 0.6,
+      "precision": 0.8,
+      "recall": 0.5714,
+      "auc": 0.4762,
+      "target_dist": "64.4% başarılı"
     },
     {
       "symbol": "GLRYH.IS",
       "symbol_clean": "GLRYH",
       "status": "trained",
-      "model_path": "models/GLRYH.pkl"
-    },
-    {
-      "symbol": "GOLTS.IS",
-      "symbol_clean": "GOLTS",
-      "status": "trained",
-      "model_path": "models/GOLTS.pkl"
+      "model_path": "models/GLRYH.pkl",
+      "signal_count": 46,
+      "train_size": 27,
+      "test_size": 10,
+      "accuracy": 0.7,
+      "precision": 0.7,
+      "recall": 1.0,
+      "auc": 0.5,
+      "target_dist": "60.9% başarılı"
     },
     {
       "symbol": "IHLGM.IS",
       "symbol_clean": "IHLGM",
       "status": "trained",
-      "model_path": "models/IHLGM.pkl"
+      "model_path": "models/IHLGM.pkl",
+      "signal_count": 36,
+      "train_size": 21,
+      "test_size": 8,
+      "accuracy": 0.375,
+      "precision": 1.0,
+      "recall": 0.1667,
+      "auc": 0.5833,
+      "target_dist": "52.8% başarılı"
+    },
+    {
+      "symbol": "IHYAY.IS",
+      "symbol_clean": "IHYAY",
+      "status": "trained",
+      "model_path": "models/IHYAY.pkl",
+      "signal_count": 43,
+      "train_size": 38,
+      "test_size": 9,
+      "accuracy": 0.7778,
+      "precision": 1.0,
+      "recall": 0.6667,
+      "auc": 0.8333,
+      "target_dist": "37.2% başarılı"
     },
     {
       "symbol": "INTEM.IS",
       "symbol_clean": "INTEM",
       "status": "trained",
-      "model_path": "models/INTEM.pkl"
+      "model_path": "models/INTEM.pkl",
+      "signal_count": 44,
+      "train_size": 26,
+      "test_size": 9,
+      "accuracy": 0.5556,
+      "precision": 1.0,
+      "recall": 0.2,
+      "auc": 0.6,
+      "target_dist": "65.9% başarılı"
     },
     {
-      "symbol": "KARTN.IS",
-      "symbol_clean": "KARTN",
+      "symbol": "ISBIR.IS",
+      "symbol_clean": "ISBIR",
       "status": "trained",
-      "model_path": "models/KARTN.pkl"
+      "model_path": "models/ISBIR.pkl",
+      "signal_count": 103,
+      "train_size": 61,
+      "test_size": 21,
+      "accuracy": 0.6667,
+      "precision": 0.75,
+      "recall": 0.3333,
+      "auc": 0.6389,
+      "target_dist": "43.7% başarılı",
+      "cv_precision": 0.697
     },
     {
-      "symbol": "MAALT.IS",
-      "symbol_clean": "MAALT",
+      "symbol": "KRONT.IS",
+      "symbol_clean": "KRONT",
       "status": "trained",
-      "model_path": "models/MAALT.pkl"
+      "model_path": "models/KRONT.pkl",
+      "signal_count": 48,
+      "train_size": 28,
+      "test_size": 10,
+      "accuracy": 0.7,
+      "precision": 1.0,
+      "recall": 0.4,
+      "auc": 0.88,
+      "target_dist": "39.6% başarılı"
+    },
+    {
+      "symbol": "LUKSK.IS",
+      "symbol_clean": "LUKSK",
+      "status": "trained",
+      "model_path": "models/LUKSK.pkl",
+      "signal_count": 39,
+      "train_size": 23,
+      "test_size": 9,
+      "accuracy": 0.7778,
+      "precision": 0.6667,
+      "recall": 1.0,
+      "auc": 0.7,
+      "target_dist": "53.8% başarılı"
     },
     {
       "symbol": "MARKA.IS",
       "symbol_clean": "MARKA",
       "status": "trained",
-      "model_path": "models/MARKA.pkl"
-    },
-    {
-      "symbol": "MEPET.IS",
-      "symbol_clean": "MEPET",
-      "status": "trained",
-      "model_path": "models/MEPET.pkl"
+      "model_path": "models/MARKA.pkl",
+      "signal_count": 56,
+      "train_size": 33,
+      "test_size": 12,
+      "accuracy": 0.5833,
+      "precision": 0.6667,
+      "recall": 0.5714,
+      "auc": 0.6857,
+      "target_dist": "58.9% başarılı",
+      "cv_precision": 0.8167
     },
     {
       "symbol": "MERKO.IS",
       "symbol_clean": "MERKO",
       "status": "trained",
-      "model_path": "models/MERKO.pkl"
+      "model_path": "models/MERKO.pkl",
+      "signal_count": 49,
+      "train_size": 42,
+      "test_size": 11,
+      "accuracy": 0.4545,
+      "precision": 0.6667,
+      "recall": 0.2857,
+      "auc": 0.5357,
+      "target_dist": "69.4% başarılı"
     },
     {
       "symbol": "MRSHL.IS",
       "symbol_clean": "MRSHL",
       "status": "trained",
-      "model_path": "models/MRSHL.pkl"
+      "model_path": "models/MRSHL.pkl",
+      "signal_count": 63,
+      "train_size": 37,
+      "test_size": 13,
+      "accuracy": 0.7692,
+      "precision": 0.8889,
+      "recall": 0.8,
+      "auc": 0.7667,
+      "target_dist": "54.0% başarılı",
+      "cv_precision": 0.8677
     },
     {
       "symbol": "NIBAS.IS",
       "symbol_clean": "NIBAS",
       "status": "trained",
-      "model_path": "models/NIBAS.pkl"
+      "model_path": "models/NIBAS.pkl",
+      "signal_count": 49,
+      "train_size": 42,
+      "test_size": 11,
+      "accuracy": 0.4545,
+      "precision": 0.6667,
+      "recall": 0.2857,
+      "auc": 0.5714,
+      "target_dist": "69.4% başarılı"
     },
     {
-      "symbol": "OYAYO.IS",
-      "symbol_clean": "OYAYO",
+      "symbol": "NUHCM.IS",
+      "symbol_clean": "NUHCM",
       "status": "trained",
-      "model_path": "models/OYAYO.pkl"
+      "model_path": "models/NUHCM.pkl",
+      "signal_count": 44,
+      "train_size": 26,
+      "test_size": 9,
+      "accuracy": 0.4444,
+      "precision": 0.6667,
+      "recall": 0.3333,
+      "auc": 0.5,
+      "target_dist": "50.0% başarılı"
     },
     {
       "symbol": "PAPIL.IS",
       "symbol_clean": "PAPIL",
       "status": "trained",
-      "model_path": "models/PAPIL.pkl"
+      "model_path": "models/PAPIL.pkl",
+      "signal_count": 36,
+      "train_size": 30,
+      "test_size": 8,
+      "accuracy": 0.375,
+      "precision": 0.75,
+      "recall": 0.4286,
+      "auc": 0.2857,
+      "target_dist": "50.0% başarılı"
     },
     {
       "symbol": "PEKGY.IS",
       "symbol_clean": "PEKGY",
       "status": "trained",
-      "model_path": "models/PEKGY.pkl"
+      "model_path": "models/PEKGY.pkl",
+      "signal_count": 37,
+      "train_size": 22,
+      "test_size": 9,
+      "accuracy": 0.3333,
+      "precision": 1.0,
+      "recall": 0.25,
+      "auc": 0.625,
+      "target_dist": "56.8% başarılı"
     },
     {
       "symbol": "PKART.IS",
       "symbol_clean": "PKART",
       "status": "trained",
-      "model_path": "models/PKART.pkl"
-    },
-    {
-      "symbol": "PSDTC.IS",
-      "symbol_clean": "PSDTC",
-      "status": "trained",
-      "model_path": "models/PSDTC.pkl"
+      "model_path": "models/PKART.pkl",
+      "signal_count": 48,
+      "train_size": 28,
+      "test_size": 10,
+      "accuracy": 0.4,
+      "precision": 0.75,
+      "recall": 0.375,
+      "auc": 0.1875,
+      "target_dist": "58.3% başarılı"
     },
     {
       "symbol": "RTALB.IS",
       "symbol_clean": "RTALB",
       "status": "trained",
-      "model_path": "models/RTALB.pkl"
+      "model_path": "models/RTALB.pkl",
+      "signal_count": 48,
+      "train_size": 28,
+      "test_size": 10,
+      "accuracy": 0.6,
+      "precision": 0.75,
+      "recall": 0.75,
+      "auc": 0.375,
+      "target_dist": "64.6% başarılı"
     },
     {
       "symbol": "SAFKR.IS",
       "symbol_clean": "SAFKR",
       "status": "trained",
-      "model_path": "models/SAFKR.pkl"
+      "model_path": "models/SAFKR.pkl",
+      "signal_count": 46,
+      "train_size": 27,
+      "test_size": 10,
+      "accuracy": 0.7,
+      "precision": 1.0,
+      "recall": 0.5714,
+      "auc": 0.8571,
+      "target_dist": "47.8% başarılı"
     },
     {
       "symbol": "TDGYO.IS",
       "symbol_clean": "TDGYO",
       "status": "trained",
-      "model_path": "models/TDGYO.pkl"
+      "model_path": "models/TDGYO.pkl",
+      "signal_count": 46,
+      "train_size": 27,
+      "test_size": 10,
+      "accuracy": 0.5,
+      "precision": 0.6667,
+      "recall": 0.3333,
+      "auc": 0.375,
+      "target_dist": "47.8% başarılı"
+    },
+    {
+      "symbol": "TRHOL.IS",
+      "symbol_clean": "TRHOL",
+      "status": "trained",
+      "model_path": "models/TRHOL.pkl",
+      "signal_count": 59,
+      "train_size": 50,
+      "test_size": 13,
+      "accuracy": 0.4615,
+      "precision": 0.6667,
+      "recall": 0.25,
+      "auc": 0.5,
+      "target_dist": "67.8% başarılı",
+      "cv_precision": 0.7434
     },
     {
       "symbol": "TURGG.IS",
       "symbol_clean": "TURGG",
       "status": "trained",
-      "model_path": "models/TURGG.pkl"
+      "model_path": "models/TURGG.pkl",
+      "signal_count": 34,
+      "train_size": 28,
+      "test_size": 8,
+      "accuracy": 0.75,
+      "precision": 0.75,
+      "recall": 0.75,
+      "auc": 0.5625,
+      "target_dist": "67.6% başarılı"
     },
     {
-      "symbol": "ULAS.IS",
-      "symbol_clean": "ULAS",
+      "symbol": "YAYLA.IS",
+      "symbol_clean": "YAYLA",
       "status": "trained",
-      "model_path": "models/ULAS.pkl"
-    },
-    {
-      "symbol": "YESIL.IS",
-      "symbol_clean": "YESIL",
-      "status": "trained",
-      "model_path": "models/YESIL.pkl"
+      "model_path": "models/YAYLA.pkl",
+      "signal_count": 48,
+      "train_size": 28,
+      "test_size": 10,
+      "accuracy": 0.7,
+      "precision": 0.8,
+      "recall": 0.6667,
+      "auc": 0.5417,
+      "target_dist": "62.5% başarılı"
     },
     {
       "symbol": "YGGYO.IS",
       "symbol_clean": "YGGYO",
       "status": "trained",
-      "model_path": "models/YGGYO.pkl"
-    },
-    {
-      "symbol": "YYAPI.IS",
-      "symbol_clean": "YYAPI",
-      "status": "trained",
-      "model_path": "models/YYAPI.pkl"
-    },
-    {
-      "symbol": "ZOREN.IS",
-      "symbol_clean": "ZOREN",
-      "status": "trained",
-      "model_path": "models/ZOREN.pkl"
+      "model_path": "models/YGGYO.pkl",
+      "signal_count": 37,
+      "train_size": 22,
+      "test_size": 9,
+      "accuracy": 0.5556,
+      "precision": 1.0,
+      "recall": 0.3333,
+      "auc": 0.6111,
+      "target_dist": "51.4% başarılı"
     }
   ]
 }

@@ -21,6 +21,8 @@ import yfinance as yf
 import pandas_ta as ta
 from datetime import datetime, timedelta
 import warnings
+import json
+import data_utils
 import time
 import os
 
@@ -666,6 +668,9 @@ def process_single_stock(symbol, config, debug=False):
         # MultiIndex düzelt
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
+
+        # --- BOLUNME DUZELTMESI ---
+        df = data_utils.adjust_for_splits(df)
 
         # Gerekli kolonların varlığını kontrol et
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']

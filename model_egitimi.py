@@ -27,6 +27,7 @@ from sklearn.metrics import classification_report, confusion_matrix, roc_auc_sco
 import json
 import optuna
 import logging
+import data_utils
 
 # Optuna loglarını sadece hatalar için ayarla (kalabalık yapmasın)
 optuna.logging.set_verbosity(optuna.logging.ERROR)
@@ -211,9 +212,14 @@ def calculate_ut_bot(df, key_value, atr_period, use_ha=True):
 def calculate_pivot_points(df, swing_length=10):
     """
     Pine Script ta.pivothigh/ta.pivotlow ile birebir uyumlu pivot hesaplaması.
+    Destek/Direnç mantığı "kırılmamış" (unbroken) seviyeleri takip edecek şekilde güncellendi.
     """
     pivot_highs = pd.Series(index=df.index, dtype=float)
     pivot_lows = pd.Series(index=df.index, dtype=float)
+    
+    # 1. Pivot Noktalarını Belirle (Gelecek verisine bakar - Look ahead)
+    # Bu kısım sadece "burada pivot vardı" tespiti içindir.
+    # Kullanırken swing_length kadar geriden gelindiği varsayılmalı.
     
     for i in range(swing_length, len(df) - swing_length):
         try:
@@ -267,8 +273,60 @@ def calculate_pivot_points(df, swing_length=10):
     
     df['Pivot_High'] = pivot_highs
     df['Pivot_Low'] = pivot_lows
-    df['Nearest_Resistance'] = df['Pivot_High'].ffill()
-    df['Nearest_Support'] = df['Pivot_Low'].ffill()
+    
+    # 2. Dinamik Destek/Direnç Hesaplama (Look-ahead bias OLMADAN)
+    # Pivot'un teyit edildiği (confirmed) zamandan itibaren listeye eklenir.
+    # Fiyat kırarsa listeden silinir.
+    
+    supports = []     # Aktif destek listesi (değerler)
+    resistances = []  # Aktif direnç listesi (değerler)
+    
+    n = len(df)
+    nearest_support = np.full(n, np.nan)
+    nearest_resistance = np.full(n, np.nan)
+    
+    lows = df['Low'].values
+    highs = df['High'].values
+    closes = df['Close'].values
+    p_lows = pivot_lows.values
+    p_highs = pivot_highs.values
+    
+    for i in range(n):
+        # A. Yeni Teyit Edilen Pivotları Ekle
+        # Bir pivot 'i' anında oluştuysa, teyidi 'i + swing_length' anında gerçekleşir.
+        # Dolayısıyla şu an 'i' ise, 'i - swing_length' zamanındaki pivot yeni teyit olmuştur.
+        conf_idx = i - swing_length
+        if conf_idx >= 0:
+            val_low = p_lows[conf_idx]
+            if not np.isnan(val_low):
+                supports.append(float(val_low))
+            
+            val_high = p_highs[conf_idx]
+            if not np.isnan(val_high):
+                resistances.append(float(val_high))
+        
+        # B. Kırılanları Temizle
+        current_low = lows[i]
+        # Destek, Low fiyat altına inerse kırılır (veya eşitse dokunmuş olur, garanti olsun diye <= kullanıyoruz)
+        supports = [s for s in supports if s <= current_low]
+        
+        current_high = highs[i]
+        # Direnç, High fiyat üstüne çıkarsa kırılır
+        resistances = [r for r in resistances if r >= current_high]
+        
+        # C. En Yakın Olanı Seç
+        # Destek: Fiyatın (Close) altındaki en yüksek destek
+        valid_supports = [s for s in supports if s < closes[i]]
+        if valid_supports:
+            nearest_support[i] = max(valid_supports)
+            
+        # Direnç: Fiyatın (Close) üstündeki en düşük direnç
+        valid_resistances = [r for r in resistances if r > closes[i]]
+        if valid_resistances:
+            nearest_resistance[i] = min(valid_resistances)
+            
+    df['Nearest_Support'] = nearest_support
+    df['Nearest_Resistance'] = nearest_resistance
     
     # ============================================================
     # PAZAR REJİMİ VE RELATİF GÜÇ (PRECISION İÇİN)
@@ -591,6 +649,9 @@ def prepare_single_stock(symbol, config, index_df=None):
             if isinstance(df[col], pd.DataFrame):
                 df[col] = df[col].iloc[:, 0]
 
+        # --- BOLUNME DUZELTMESI ---
+        df = data_utils.adjust_for_splits(df)
+        
         # Endeks verilerini ekle
         if index_df is not None:
             # Endeks verilerini sadece gerekli kolonlarla al
