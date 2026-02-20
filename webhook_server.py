@@ -503,10 +503,11 @@ def webhook():
         else:
             header = "❌ AL SİNYALİ - ÇOK DÜŞÜK"
 
+        tf_label = "1 Saatlik" if interval == '1h' else "Günlük"
         message = f"""
 <b>{header}</b>
 
-📈 <b>{ticker}</b>
+📈 <b>{ticker}</b> ({tf_label})
 💰 Fiyat: {price}
 🎯 AI Güven: <b>%{confidence*100:.1f}</b>
 🤖 Model: {'AL' if prediction == 1 else 'BEKLEME'}
