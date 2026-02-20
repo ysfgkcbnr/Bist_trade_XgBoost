@@ -388,6 +388,9 @@ def prepare_features_from_payload(data):
 # WEBHOOK ENDPOINT'LERİ
 # ============================================================
 
+# Gunicorn ile çalışırken __main__ bloğu çalışmaz, burada yükle
+load_features_and_summary()
+
 @app.route('/health', methods=['GET'])
 def health_check():
     """Sunucu sağlık kontrolü."""
