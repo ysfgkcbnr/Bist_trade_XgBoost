@@ -484,7 +484,7 @@ def webhook():
         try:
             prediction = model.predict(features_df)[0]
             probability = model.predict_proba(features_df)[0]
-            confidence = probability[1]  # Sınıf 1 (AL) olasılığı
+            confidence = float(probability[1])  # Sınıf 1 (AL) olasılığı
         except Exception as e:
             logger.error(f"Tahmin hatası: {e}")
             return jsonify({'error': 'Prediction failed'}), 500
