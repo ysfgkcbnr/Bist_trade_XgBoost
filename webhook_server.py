@@ -51,6 +51,12 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+@app.before_request
+def force_json_content_type():
+    """TradingView application/json göndermediğinde 415 hatasını önle."""
+    if request.path == '/webhook' and request.method == 'POST':
+        request.environ['CONTENT_TYPE'] = 'application/json; charset=utf-8'
+
 # ============================================================
 # AYARLAR - BUNLARI KENDİ BİLGİLERİNLE DEĞİŞTİR!
 # ============================================================
